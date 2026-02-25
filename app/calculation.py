@@ -81,7 +81,7 @@ class Calculation:
             raise OperationError(f"Calculation failed: {str(e)}")
 
     @staticmethod
-    def _raise_div_zero():  # pragma: no cover
+    def _raise_div_zero():
         """
         Helper method to raise division by zero error.
 
