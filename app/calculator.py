@@ -343,9 +343,12 @@ class Calculator:
         """
         def format_decimal(value: Decimal) -> str:
             """Format decimal to avoid scientific notation."""
+            # Normalize to remove trailing zeros
             normalized = value.normalize()
+            # Convert to string and check if in scientific notation
             str_val = str(normalized)
             if 'E' in str_val or 'e' in str_val:
+                # Use fixed-point notation instead of scientific
                 return f"{value:.{self.config.precision}f}".rstrip('0').rstrip('.')
             return str_val
         
@@ -358,10 +361,14 @@ class Calculator:
         """
         Clear calculation history.
 
-        Saves current state to undo stack so clear can be undone.
+        Empties the calculation history. Saves current state to undo stack
+        so the clear operation itself can be undone.
         """
+        # Save current state before clearing so the clear operation can be undone
         self.undo_stack.append(CalculatorMemento(self.history.copy()))
+        # Clear the redo stack since clearing history invalidates it
         self.redo_stack.clear()
+        # Clear the history
         self.history.clear()
         logging.info("History cleared")
 
