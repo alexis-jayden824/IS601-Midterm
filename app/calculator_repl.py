@@ -36,7 +36,8 @@ def calculator_repl():
                 if command == 'help':
                     # Display available commands
                     print("\nAvailable commands:")
-                    print("  add, subtract, multiply, divide, power, root - Perform calculations")
+                    print("  add, subtract, multiply, divide, power, root - Perform basic operations")
+                    print("  modulus, int_divide, percent, abs_diff - Additional operations")
                     print("  history - Show calculation history")
                     print("  clear - Clear calculation history")
                     print("  undo - Undo the last calculation")
@@ -107,7 +108,7 @@ def calculator_repl():
                         print(f"Error loading history: {e}")
                     continue
 
-                if command in ['add', 'subtract', 'multiply', 'divide', 'power', 'root']:
+                if command in ['add', 'subtract', 'multiply', 'divide', 'power', 'root', 'modulus', 'int_divide', 'percent', 'abs_diff']:
                     # Perform the specified arithmetic operation
                     try:
                         print("\nEnter numbers (or 'cancel' to abort):")
@@ -127,11 +128,12 @@ def calculator_repl():
                         # Perform the calculation
                         result = calc.perform_operation(a, b)
 
-                        # Format result to avoid scientific notation
+                        # Format the result to avoid scientific notation
                         if isinstance(result, Decimal):
                             normalized = result.normalize()
                             str_val = str(normalized)
                             if 'E' in str_val or 'e' in str_val:
+                                # Use fixed-point notation instead of scientific
                                 precision = calc.config.precision
                                 result_str = f"{result:.{precision}f}".rstrip('0').rstrip('.')
                             else:
