@@ -341,8 +341,16 @@ class Calculator:
         Returns:
             List[str]: List of formatted calculation history entries.
         """
+        def format_decimal(value: Decimal) -> str:
+            """Format decimal to avoid scientific notation."""
+            normalized = value.normalize()
+            str_val = str(normalized)
+            if 'E' in str_val or 'e' in str_val:
+                return f"{value:.{self.config.precision}f}".rstrip('0').rstrip('.')
+            return str_val
+        
         return [
-            f"{calc.operation}({calc.operand1}, {calc.operand2}) = {calc.result}"
+            f"{calc.operation}({format_decimal(calc.operand1)}, {format_decimal(calc.operand2)}) = {format_decimal(calc.result)}"
             for calc in self.history
         ]
 
@@ -350,11 +358,11 @@ class Calculator:
         """
         Clear calculation history.
 
-        Empties the calculation history and clears the undo and redo stacks.
+        Saves current state to undo stack so clear can be undone.
         """
-        self.history.clear()
-        self.undo_stack.clear()
+        self.undo_stack.append(CalculatorMemento(self.history.copy()))
         self.redo_stack.clear()
+        self.history.clear()
         logging.info("History cleared")
 
     def undo(self) -> bool:

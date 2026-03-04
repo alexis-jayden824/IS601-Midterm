@@ -151,10 +151,22 @@ def test_clear_history(calculator):
     operation = OperationFactory.create_operation('add')
     calculator.set_operation(operation)
     calculator.perform_operation(2, 3)
+    # Store length of history before clear
+    history_len_before = len(calculator.history)
+    assert history_len_before == 1  # One add operation
+    
     calculator.clear_history()
+    
+    # History should be cleared
     assert calculator.history == []
-    assert calculator.undo_stack == []
+    # Redo stack should be cleared
     assert calculator.redo_stack == []
+    # Undo stack should have saved state (so clear can be undone)
+    assert len(calculator.undo_stack) > 0
+    
+    # Verify that undo restores the history (clearing is undoable)
+    calculator.undo()
+    assert len(calculator.history) == history_len_before
 
 # Test REPL Commands (using patches for input/output handling)
 

@@ -127,11 +127,19 @@ def calculator_repl():
                         # Perform the calculation
                         result = calc.perform_operation(a, b)
 
-                        # Normalize the result if it's a Decimal
+                        # Format result to avoid scientific notation
                         if isinstance(result, Decimal):
-                            result = result.normalize()
+                            normalized = result.normalize()
+                            str_val = str(normalized)
+                            if 'E' in str_val or 'e' in str_val:
+                                precision = calc.config.precision
+                                result_str = f"{result:.{precision}f}".rstrip('0').rstrip('.')
+                            else:
+                                result_str = str_val
+                        else:
+                            result_str = str(result)
 
-                        print(f"\nResult: {result}")
+                        print(f"\nResult: {result_str}")
                     except (ValidationError, OperationError) as e:
                         # Handle known exceptions related to validation or operation errors
                         print(f"Error: {e}")
